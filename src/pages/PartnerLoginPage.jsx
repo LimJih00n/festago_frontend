@@ -58,7 +58,7 @@ export default function PartnerLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col">
+    <div className="fixed inset-0 bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col overflow-y-auto overscroll-none">
       {/* 헤더 */}
       <div className="p-4 flex justify-between items-center">
         <h2 className="text-sm font-medium text-gray-800">기업 전용 로그인화면</h2>

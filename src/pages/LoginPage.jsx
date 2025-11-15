@@ -14,7 +14,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col overflow-hidden overscroll-none">
       {/* 헤더 */}
       <div className="p-4 flex justify-between items-center">
         <h2 className="text-sm font-medium text-gray-800">로그인 화면</h2>

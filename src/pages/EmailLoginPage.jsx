@@ -47,7 +47,7 @@ export default function EmailLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col">
+    <div className="fixed inset-0 bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col overflow-y-auto overscroll-none">
       {/* 헤더 */}
       <div className="p-4 flex items-center gap-4">
         <button onClick={() => navigate('/login')} className="p-1">
