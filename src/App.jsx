@@ -50,6 +50,7 @@ function App() {
           <Route path="/login/email" element={<EmailLoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/signup/partner" element={<ComingSoon title="파트너 회원가입" />} />
+          <Route path="/find-password" element={<ComingSoon title="비밀번호 찾기" />} />
 
           {/* 사업자 영역 */}
           <Route path="/partner" element={<PartnerLayout />}>
@@ -63,6 +64,9 @@ function App() {
             <Route path="messages" element={<Messages />} />
             <Route path="notifications" element={<Notifications />} />
           </Route>
+
+          {/* 404 - 등록되지 않은 모든 경로 */}
+          <Route path="*" element={<ComingSoon title="페이지 준비 중" />} />
         </Routes>
       </div>
     </BrowserRouter>
