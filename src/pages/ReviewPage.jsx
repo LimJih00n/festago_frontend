@@ -51,6 +51,17 @@ export default function ReviewPage() {
     return new Date(b.created_at) - new Date(a.created_at);
   });
 
+  // 리뷰 작성 페이지로 이동 (로그인 체크)
+  const handleWriteReview = () => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert('로그인이 필요한 서비스입니다.');
+      navigate('/login');
+      return;
+    }
+    navigate(`/events/${id}/reviews/write`);
+  };
+
   if (loading) {
     return (
       <>
@@ -223,7 +234,7 @@ export default function ReviewPage() {
         <div className="bg-white px-4 py-12 text-center">
           <p className="text-gray-500">리뷰 작성 폼이 여기에 표시됩니다.</p>
           <button
-            onClick={() => navigate(`/events/${id}/reviews/write`)}
+            onClick={handleWriteReview}
             className="mt-4 px-6 py-2 bg-pink-500 text-white rounded-lg"
           >
             리뷰 작성하기
@@ -235,7 +246,7 @@ export default function ReviewPage() {
       {activeTab === 'list' && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t safe-area-inset-bottom">
           <button
-            onClick={() => navigate(`/events/${id}/reviews/write`)}
+            onClick={handleWriteReview}
             className="w-full py-4 bg-pink-500 text-white rounded-2xl font-semibold shadow-lg"
           >
             리뷰쓰기

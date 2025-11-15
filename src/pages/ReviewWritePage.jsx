@@ -23,6 +23,14 @@ export default function ReviewWritePage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    // 로그인 체크
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert('로그인이 필요한 서비스입니다.');
+      navigate('/login');
+      return;
+    }
+
     fetchEvent();
   }, [id]);
 
