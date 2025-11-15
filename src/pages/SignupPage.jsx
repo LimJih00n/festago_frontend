@@ -67,7 +67,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col">
+    <div className="fixed inset-0 bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col overflow-hidden overscroll-none">
       {/* 헤더 */}
       <div className="p-4 flex items-center gap-4">
         <button onClick={() => navigate('/login')} className="p-1">
@@ -77,7 +77,7 @@ export default function SignupPage() {
       </div>
 
       {/* 메인 콘텐츠 */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-8 overflow-y-auto">
         {/* 로고 */}
         <div className="mb-8">
           <img
