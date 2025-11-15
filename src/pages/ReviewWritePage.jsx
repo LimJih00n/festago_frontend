@@ -278,8 +278,8 @@ export default function ReviewWritePage() {
           </div>
         )}
 
-        {/* 제출 버튼 - MobileTabBar 위에 표시 */}
-        <div className="fixed bottom-20 left-0 right-0 p-4 bg-white border-t z-[60]">
+        {/* 제출 버튼 */}
+        <div className="mb-6">
           <button
             type="submit"
             disabled={submitting}
