@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+import EventListPage from './pages/EventListPage';
 import EventDetailPage from './pages/EventDetailPage';
 import MapPage from './pages/MapPage';
 import ChatbotPage from './pages/ChatbotPage';
@@ -34,6 +35,7 @@ function App() {
           {/* 일반 유저 영역 */}
           <Route path="/" element={<ConsumerLayout />}>
             <Route index element={<HomePage />} />
+            <Route path="events" element={<EventListPage />} />
             <Route path="events/:id" element={<EventDetailPage />} />
             <Route path="events/:id/reviews" element={<ReviewPage />} />
             <Route path="events/:id/reviews/write" element={<ReviewWritePage />} />

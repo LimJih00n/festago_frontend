@@ -271,7 +271,7 @@ export default function ReviewWritePage() {
         )}
 
         {/* 제출 버튼 */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t safe-area-inset-bottom">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t safe-area-inset-bottom z-50">
           <button
             type="submit"
             disabled={submitting}

@@ -35,7 +35,7 @@ export default function EventDetailPage() {
       try {
         await navigator.share({
           title: event.name,
-          text: event.description,
+          text: `${event.name} - 확인하세요!`,
           url: window.location.href,
         });
       } catch (err) {
