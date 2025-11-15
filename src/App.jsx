@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage';
 import PartnerLoginPage from './pages/PartnerLoginPage';
 import EmailLoginPage from './pages/EmailLoginPage';
 import SignupPage from './pages/SignupPage';
+import PartnerSignupPage from './pages/PartnerSignupPage';
 import MobileTabBar from './components/mobile/MobileTabBar';
 
 // 사업자 페이지
@@ -51,7 +52,7 @@ function App() {
           <Route path="/login/partner" element={<PartnerLoginPage />} />
           <Route path="/login/email" element={<EmailLoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/signup/partner" element={<ComingSoon title="파트너 회원가입" />} />
+          <Route path="/signup/partner" element={<PartnerSignupPage />} />
           <Route path="/find-password" element={<ComingSoon title="비밀번호 찾기" />} />
 
           {/* 사업자 영역 */}

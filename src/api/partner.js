@@ -1,5 +1,8 @@
 import axios from './axios';
 
+// 파트너 회원가입
+export const partnerSignup = (data) => axios.post('/api/partners/signup/', data);
+
 // 사업자 프로필
 export const partnerAPI = {
   // 내 프로필 조회
