@@ -14,7 +14,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col">
+    <div className="h-screen bg-gradient-to-b from-pink-200 via-pink-300 to-pink-200 flex flex-col overflow-hidden">
       {/* 헤더 */}
       <div className="p-4 flex justify-between items-center">
         <h2 className="text-sm font-medium text-gray-800">로그인 화면</h2>
@@ -83,18 +83,6 @@ export default function LoginPage() {
               <img
                 src="/images/구글.svg"
                 alt="Google"
-                className="w-12 h-12"
-              />
-            </button>
-
-            <button
-              onClick={() => handleSocialLogin('apple')}
-              className="hover:opacity-80 transition-opacity"
-              title="애플 로그인"
-            >
-              <img
-                src="/images/애플.svg"
-                alt="Apple"
                 className="w-12 h-12"
               />
             </button>
