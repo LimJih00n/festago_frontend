@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, X } from 'lucide-react';
+import api from '../api/axios';
 
 export default function PartnerLoginPage() {
   const navigate = useNavigate();
@@ -26,26 +27,17 @@ export default function PartnerLoginPage() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
+      const response = await api.post('/api/auth/login/', {
+        username: formData.username,
+        password: formData.password,
       });
 
-      if (!response.ok) {
-        throw new Error('로그인 실패');
-      }
-
-      const data = await response.json();
+      const data = response.data;
 
       // 토큰 저장
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
+      localStorage.setItem('username', formData.username);
 
       // 파트너 대시보드로 이동
       navigate('/partner/dashboard');
