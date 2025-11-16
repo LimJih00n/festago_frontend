@@ -168,7 +168,7 @@ function ApplicationForm() {
       if (formData.brand_logo instanceof File) {
         const logoFormData = new FormData();
         logoFormData.append("image", formData.brand_logo);
-        logoFormData.append("image_type", "brand_logo");
+        logoFormData.append("image_type", "logo");
         const { data: logoData } = await uploadAPI.uploadImage(logoFormData);
         logoUrl = logoData.image;
       }
