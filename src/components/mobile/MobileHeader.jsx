@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 export default function MobileHeader({
   title = '페스타고',
   showBackButton = false,
-  showNotification = true,
+  showNotification = false,
   showMenu = false,
   showLogo = true
 }) {
