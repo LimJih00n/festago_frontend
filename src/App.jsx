@@ -8,6 +8,7 @@ import CalendarPage from './pages/CalendarPage';
 import ReviewPage from './pages/ReviewPage';
 import ReviewWritePage from './pages/ReviewWritePage';
 import ProfilePage from './pages/ProfilePage';
+import SearchPage from './pages/SearchPage';
 import LoginPage from './pages/LoginPage';
 import PartnerLoginPage from './pages/PartnerLoginPage';
 import EmailLoginPage from './pages/EmailLoginPage';
@@ -45,6 +46,7 @@ function App() {
             <Route path="bookmarks" element={<ComingSoon title="찜" />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="search" element={<SearchPage />} />
           </Route>
 
           {/* 로그인/회원가입 */}
