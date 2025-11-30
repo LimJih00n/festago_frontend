@@ -1,54 +1,28 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles } from 'lucide-react';
+import { Send, Sparkles, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MobileHeader from '../components/mobile/MobileHeader';
-import { getEvents } from '../api/events';
+import api from '../api/axios';
 
 export default function ChatbotPage() {
   const navigate = useNavigate();
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: '안녕하세요! 🎉\n어떤 축제를 찾고 계신가요?',
+      content: '안녕하세요! 저는 축제 추천 AI 페스타고예요! 🎉\n\n어떤 축제나 행사를 찾고 계신가요? 자유롭게 물어봐주세요!\n\n예를 들어:\n• "서울에서 이번 주말에 가볼만한 곳 추천해줘"\n• "데이트하기 좋은 전시회 있을까?"\n• "가족이랑 갈만한 축제 알려줘"',
       timestamp: new Date(),
     },
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [questionStep, setQuestionStep] = useState(0);
-  const [userPreferences, setUserPreferences] = useState({});
   const messagesEndRef = useRef(null);
 
   // 추천 질문 버튼
   const suggestedQuestions = [
-    '오늘 근처에서 하는 축제 알려줘',
-    '이번 주말 무료 축제가 있을까?',
-    '당일치기 축제 추천해줘',
-    '사진 찍기 좋은 곳 있어?',
-  ];
-
-  // 챗봇 질문 플로우
-  const questionFlow = [
-    {
-      question: '어떤 종류의 행사를 선호하시나요?',
-      options: ['축제', '공연', '전시', '팝업스토어'],
-      key: 'category',
-    },
-    {
-      question: '어느 지역의 행사를 찾으시나요?',
-      options: ['서울', '부산', '경기', '상관없어요'],
-      key: 'location',
-    },
-    {
-      question: '언제 방문하고 싶으신가요?',
-      options: ['이번 주말', '다음 주', '이번 달', '언제든'],
-      key: 'when',
-    },
-    {
-      question: '누구와 함께 가시나요?',
-      options: ['혼자', '친구', '연인', '가족'],
-      key: 'companion',
-    },
+    '이번 주말 서울에서 뭐하지?',
+    '데이트하기 좋은 곳 추천해줘',
+    '무료로 즐길 수 있는 행사 있어?',
+    '가족이랑 갈만한 축제 알려줘',
   ];
 
   const scrollToBottom = () => {
@@ -72,118 +46,67 @@ export default function ChatbotPage() {
     ]);
   };
 
-  // 사용자 선택 처리
-  const handleOptionSelect = async (option) => {
-    const currentQuestion = questionFlow[questionStep];
-
-    // 사용자 선택 저장
-    addMessage('user', option);
-    setUserPreferences((prev) => ({
-      ...prev,
-      [currentQuestion.key]: option,
-    }));
-
-    setIsTyping(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsTyping(false);
-
-    // 다음 질문 또는 추천
-    if (questionStep < questionFlow.length - 1) {
-      setQuestionStep(questionStep + 1);
-      addMessage('assistant', questionFlow[questionStep + 1].question);
-    } else {
-      // 모든 질문 완료 - 축제 추천
-      await recommendEvents({
-        ...userPreferences,
-        [currentQuestion.key]: option,
-      });
-    }
-  };
-
-  // 축제 추천
-  const recommendEvents = async (preferences) => {
+  // GPT API 호출
+  const sendToGPT = async (userMessage) => {
     setIsTyping(true);
 
     try {
-      // 이벤트 데이터 가져오기
-      const response = await getEvents();
-      const allEvents = response.data.results || response.data;
+      // 대화 히스토리 구성 (최근 10개만)
+      const chatHistory = messages.slice(-10).map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
 
-      // 필터링
-      let filtered = allEvents;
+      // 사용자 메시지 추가
+      chatHistory.push({
+        role: 'user',
+        content: userMessage,
+      });
 
-      // 카테고리 필터
-      if (preferences.category && preferences.category !== '상관없어요') {
-        const categoryMap = {
-          축제: 'festival',
-          공연: 'concert',
-          전시: 'exhibition',
-          팝업스토어: 'popup',
-        };
-        filtered = filtered.filter(
-          (e) => e.category === categoryMap[preferences.category]
-        );
-      }
+      // API 호출
+      const response = await api.post('/api/chatbot/', {
+        messages: chatHistory,
+      });
 
-      // 지역 필터
-      if (preferences.location && preferences.location !== '상관없어요') {
-        filtered = filtered.filter((e) =>
-          e.location.includes(preferences.location)
-        );
-      }
+      const { message, recommendations } = response.data;
 
-      // 랜덤하게 4개 선택
-      const shuffled = [...filtered].sort(() => Math.random() - 0.5);
-      const recommendations = shuffled.slice(0, 4);
-
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setIsTyping(false);
-
-      if (recommendations.length > 0) {
-        addMessage(
-          'assistant',
-          `${preferences.companion || '당신'}을 위한 맞춤 추천이에요! 🎊\n아래 축제들을 확인해보세요:`,
-          recommendations
-        );
-      } else {
-        addMessage(
-          'assistant',
-          '죄송해요, 조건에 맞는 축제를 찾지 못했어요. 😢\n다른 조건으로 다시 검색해볼까요?'
-        );
-        setQuestionStep(0);
-        setUserPreferences({});
-      }
+      // 응답 추가
+      addMessage('assistant', message, recommendations);
     } catch (error) {
-      console.error('추천 실패:', error);
+      console.error('챗봇 오류:', error);
+
+      let errorMessage = '죄송해요, 일시적인 오류가 발생했어요. 다시 시도해주세요! 😅';
+
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      }
+
+      addMessage('assistant', errorMessage);
+    } finally {
       setIsTyping(false);
-      addMessage(
-        'assistant',
-        '추천 중 오류가 발생했어요. 다시 시도해주세요.'
-      );
     }
   };
 
   // 사용자 메시지 전송
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || isTyping) return;
 
     const userMsg = inputMessage.trim();
     addMessage('user', userMsg);
     setInputMessage('');
 
-    setIsTyping(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsTyping(false);
+    await sendToGPT(userMsg);
+  };
 
-    // 간단한 응답 생성
-    if (questionStep < questionFlow.length) {
-      addMessage('assistant', questionFlow[questionStep].question);
-    } else {
-      addMessage(
-        'assistant',
-        '위의 버튼을 눌러 질문에 답변해주시면 맞춤 축제를 추천해드릴게요!'
-      );
-    }
+  // 대화 초기화
+  const handleReset = () => {
+    setMessages([
+      {
+        role: 'assistant',
+        content: '안녕하세요! 저는 축제 추천 AI 페스타고예요! 🎉\n\n어떤 축제나 행사를 찾고 계신가요? 자유롭게 물어봐주세요!',
+        timestamp: new Date(),
+      },
+    ]);
   };
 
   return (
@@ -191,9 +114,18 @@ export default function ChatbotPage() {
       <MobileHeader showMenu={false} showNotification={false} />
 
       {/* 헤더 */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-2">
-        <Sparkles className="text-pink-500" size={24} />
-        <h1 className="text-lg font-bold text-gray-900">AI 축제 추천</h1>
+      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Sparkles className="text-pink-500" size={24} />
+          <h1 className="text-lg font-bold text-gray-900">AI 축제 추천</h1>
+        </div>
+        <button
+          onClick={handleReset}
+          className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
+          title="대화 초기화"
+        >
+          <RefreshCw size={20} />
+        </button>
       </div>
 
       {/* 메시지 영역 */}
@@ -207,13 +139,13 @@ export default function ChatbotPage() {
               }`}
             >
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                className={`max-w-[85%] rounded-2xl px-4 py-3 ${
                   msg.role === 'user'
                     ? 'bg-pink-500 text-white'
                     : 'bg-white text-gray-900 shadow-sm'
                 }`}
               >
-                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                 <p
                   className={`text-xs mt-1 ${
                     msg.role === 'user' ? 'text-pink-100' : 'text-gray-400'
@@ -227,26 +159,8 @@ export default function ChatbotPage() {
               </div>
             </div>
 
-            {/* 옵션 버튼 (어시스턴트 메시지 후) */}
-            {msg.role === 'assistant' &&
-              index === messages.length - 1 &&
-              questionStep < questionFlow.length &&
-              !isTyping && (
-                <div className="flex flex-wrap gap-2 mt-3 ml-2">
-                  {questionFlow[questionStep].options.map((option) => (
-                    <button
-                      key={option}
-                      onClick={() => handleOptionSelect(option)}
-                      className="px-4 py-2 bg-white border border-pink-200 text-pink-600 rounded-full text-sm font-medium hover:bg-pink-50 transition-colors"
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              )}
-
             {/* 추천 카드 */}
-            {msg.recommendations && (
+            {msg.recommendations && msg.recommendations.length > 0 && (
               <div className="mt-3 space-y-3">
                 {msg.recommendations.map((event) => (
                   <div
@@ -256,22 +170,38 @@ export default function ChatbotPage() {
                   >
                     <div className="flex">
                       <div className="w-24 h-24 flex-shrink-0 bg-gradient-to-br from-pink-100 to-pink-200">
-                        <img
-                          src={event.poster_image}
-                          alt={event.name}
-                          className="w-full h-full object-cover"
-                        />
+                        {event.poster_image ? (
+                          <img
+                            src={event.poster_image}
+                            alt={event.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-3xl">
+                            🎪
+                          </div>
+                        )}
                       </div>
                       <div className="flex-1 p-3">
-                        <h4 className="font-bold text-sm text-gray-900 line-clamp-2 mb-1">
-                          {event.name}
-                        </h4>
+                        <div className="flex items-start justify-between">
+                          <h4 className="font-bold text-sm text-gray-900 line-clamp-2 mb-1 flex-1">
+                            {event.name}
+                          </h4>
+                          <span className="text-xs bg-pink-100 text-pink-600 px-2 py-0.5 rounded-full ml-2 flex-shrink-0">
+                            {event.category === 'festival' && '축제'}
+                            {event.category === 'concert' && '공연'}
+                            {event.category === 'exhibition' && '전시'}
+                            {event.category === 'popup' && '팝업'}
+                          </span>
+                        </div>
                         <p className="text-xs text-gray-500 mb-1">
                           📍 {event.location}
                         </p>
-                        <p className="text-xs text-gray-500">
-                          📅 {event.start_date} ~ {event.end_date}
-                        </p>
+                        {event.start_date && (
+                          <p className="text-xs text-gray-500">
+                            📅 {event.start_date} ~ {event.end_date}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -285,16 +215,17 @@ export default function ChatbotPage() {
         {isTyping && (
           <div className="flex justify-start">
             <div className="bg-white rounded-2xl px-4 py-3 shadow-sm">
-              <div className="flex gap-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+              <div className="flex gap-1 items-center">
+                <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
                 <div
-                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
                   style={{ animationDelay: '0.2s' }}
                 ></div>
                 <div
-                  className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
                   style={{ animationDelay: '0.4s' }}
                 ></div>
+                <span className="ml-2 text-xs text-gray-400">생각 중...</span>
               </div>
             </div>
           </div>
@@ -306,15 +237,16 @@ export default function ChatbotPage() {
       {/* 추천 질문 (처음에만 표시) */}
       {messages.length === 1 && (
         <div className="px-4 pb-4">
-          <p className="text-xs text-gray-500 mb-2">추천 질문:</p>
+          <p className="text-xs text-gray-500 mb-2">이런 질문을 해보세요:</p>
           <div className="flex flex-wrap gap-2">
             {suggestedQuestions.map((q, idx) => (
               <button
                 key={idx}
                 onClick={() => {
-                  setInputMessage(q);
+                  addMessage('user', q);
+                  sendToGPT(q);
                 }}
-                className="text-xs bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-full hover:bg-gray-50"
+                className="text-xs bg-white border border-pink-200 text-pink-600 px-3 py-1.5 rounded-full hover:bg-pink-50 transition-colors"
               >
                 {q}
               </button>
@@ -331,12 +263,13 @@ export default function ChatbotPage() {
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            placeholder="메시지를 입력하세요..."
-            className="flex-1 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm"
+            placeholder="축제에 대해 무엇이든 물어보세요..."
+            disabled={isTyping}
+            className="flex-1 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-400 text-sm disabled:opacity-50"
           />
           <button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim()}
+            disabled={!inputMessage.trim() || isTyping}
             className="p-3 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={20} />
