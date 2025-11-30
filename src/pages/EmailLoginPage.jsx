@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, ChevronLeft } from 'lucide-react';
 import { login } from '../api/auth';
+import { useAuthStore } from '../utils/store';
 
 export default function EmailLoginPage() {
   const navigate = useNavigate();
+  const authLogin = useAuthStore((state) => state.login);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -32,9 +34,14 @@ export default function EmailLoginPage() {
         password: formData.password,
       });
 
-      // 토큰 저장
-      localStorage.setItem('access_token', response.data.access);
-      localStorage.setItem('refresh_token', response.data.refresh);
+      // 토큰 저장 및 인증 상태 업데이트
+      authLogin(
+        { access: response.data.access, refresh: response.data.refresh },
+        { username: formData.email }
+      );
+
+      // 사용자 이름도 저장 (ProfilePage에서 사용)
+      localStorage.setItem('username', formData.email);
 
       // 홈으로 이동
       navigate('/');

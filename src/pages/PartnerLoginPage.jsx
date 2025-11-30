@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, X } from 'lucide-react';
 import api from '../api/axios';
+import { useAuthStore } from '../utils/store';
 
 export default function PartnerLoginPage() {
   const navigate = useNavigate();
+  const authLogin = useAuthStore((state) => state.login);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -34,9 +36,11 @@ export default function PartnerLoginPage() {
 
       const data = response.data;
 
-      // 토큰 저장
-      localStorage.setItem('access_token', data.access);
-      localStorage.setItem('refresh_token', data.refresh);
+      // 토큰 저장 및 인증 상태 업데이트
+      authLogin(
+        { access: data.access, refresh: data.refresh },
+        { username: formData.username }
+      );
       localStorage.setItem('username', formData.username);
 
       // 파트너 대시보드로 이동

@@ -106,7 +106,7 @@ export default function ReviewWritePage() {
       }
 
       await createReview({
-        event_id: id,
+        event_id: parseInt(id, 10),
         rating: formData.rating,
         comment: formData.comment.trim(),
         images: uploadedImageUrls,

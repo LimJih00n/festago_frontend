@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { User, Heart, Star, Settings, LogOut, ChevronRight } from 'lucide-react';
 import { getBookmarks } from '../api/bookmarks';
 import { getMyReviews } from '../api/reviews';
+import { getCurrentUser } from '../api/auth';
 import MobileHeader from '../components/mobile/MobileHeader';
 
 export default function ProfilePage() {
@@ -29,16 +30,14 @@ export default function ProfilePage() {
         return;
       }
 
-      // 사용자 정보 (임시로 localStorage에서 가져옴)
-      const username = localStorage.getItem('username') || '사용자';
-      setUser({ username });
-
-      // 북마크와 리뷰 가져오기
-      const [bookmarksRes, reviewsRes] = await Promise.all([
+      // 사용자 정보, 북마크, 리뷰 가져오기
+      const [userRes, bookmarksRes, reviewsRes] = await Promise.all([
+        getCurrentUser(),
         getBookmarks(),
         getMyReviews(),
       ]);
 
+      setUser(userRes.data);
       setBookmarks(bookmarksRes.data || []);
       setReviews(reviewsRes.data || []);
     } catch (err) {
@@ -91,7 +90,9 @@ export default function ProfilePage() {
             <h2 className="text-xl font-bold text-gray-900 mb-1">
               {user?.username || '사용자'}
             </h2>
-            <p className="text-sm text-gray-500">안녕하세요!</p>
+            {user?.email && (
+              <p className="text-sm text-gray-500">{user.email}</p>
+            )}
           </div>
           <button
             onClick={() => navigate('/profile/edit')}
