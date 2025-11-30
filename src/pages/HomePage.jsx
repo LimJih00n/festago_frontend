@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, User, Menu, ChevronRight } from 'lucide-react';
+import { Search, User, ChevronRight } from 'lucide-react';
 import { getEvents } from '../api/events';
 
 export default function HomePage() {
@@ -70,9 +70,6 @@ export default function HomePage() {
       {/* 상단 헤더 */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="px-4 py-3 flex items-center justify-between">
-          <button className="p-2">
-            <Menu size={24} className="text-gray-700" />
-          </button>
           <div className="flex items-center gap-2">
             <img
               src="/images/logo.svg"
