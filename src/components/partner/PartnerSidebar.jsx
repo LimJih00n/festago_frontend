@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Tent, ClipboardList, Building2, MessageCircle, Home } from 'lucide-react';
+import { LayoutDashboard, Tent, ClipboardList, Building2, MessageCircle, Home, BarChart3 } from 'lucide-react';
 import NotificationDropdown from './NotificationDropdown';
 
 function PartnerSidebar() {
@@ -9,8 +9,9 @@ function PartnerSidebar() {
     { path: '/partner/dashboard', icon: LayoutDashboard, label: '대시보드' },
     { path: '/partner/festivals', icon: Tent, label: '축제 탐색' },
     { path: '/partner/applications', icon: ClipboardList, label: '내 지원 내역' },
-    { path: '/partner/profile', icon: Building2, label: '프로필 관리' },
+    { path: '/partner/analytics', icon: BarChart3, label: '데이터 분석' },
     { path: '/partner/messages', icon: MessageCircle, label: '메시지' },
+    { path: '/partner/profile', icon: Building2, label: '프로필 관리' },
   ];
 
   const isActive = (path) => location.pathname === path;
