@@ -26,10 +26,15 @@ export default function BookmarkButton({ eventId, isBookmarked: initialBookmarke
       setBookmarked(!bookmarked);
     } catch (err) {
       console.error('북마크 토글 실패:', err);
+      console.error('응답 데이터:', err.response?.data);
       if (err.response?.status === 401) {
-        alert('로그인이 필요한 기능입니다.');
+        alert('로그인이 필요한 기능입니다. 다시 로그인해주세요.');
+      } else if (err.response?.data?.detail) {
+        alert(err.response.data.detail);
+      } else if (err.response?.data?.event_id) {
+        alert(err.response.data.event_id);
       } else {
-        alert('북마크 처리 중 오류가 발생했습니다.');
+        alert('북마크 처리 중 오류가 발생했습니다. 새로고침 후 다시 시도해주세요.');
       }
     } finally {
       setLoading(false);
