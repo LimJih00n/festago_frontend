@@ -38,8 +38,9 @@ export default function ProfilePage() {
       ]);
 
       setUser(userRes.data);
-      setBookmarks(bookmarksRes.data || []);
-      setReviews(reviewsRes.data || []);
+      // 페이지네이션 응답 처리 (results 배열 또는 직접 배열)
+      setBookmarks(bookmarksRes.data?.results || bookmarksRes.data || []);
+      setReviews(reviewsRes.data?.results || reviewsRes.data || []);
     } catch (err) {
       console.error('데이터 로딩 실패:', err);
       // 인증 실패 시 로그인 페이지로
