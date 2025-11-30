@@ -9,6 +9,7 @@ import ReviewPage from './pages/ReviewPage';
 import ReviewWritePage from './pages/ReviewWritePage';
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
+import ProfileEditPage from './pages/ProfileEditPage';
 import LoginPage from './pages/LoginPage';
 import PartnerLoginPage from './pages/PartnerLoginPage';
 import EmailLoginPage from './pages/EmailLoginPage';
@@ -46,6 +47,7 @@ function App() {
             <Route path="bookmarks" element={<ComingSoon title="찜" />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="profile/edit" element={<ProfileEditPage />} />
             <Route path="search" element={<SearchPage />} />
           </Route>
 

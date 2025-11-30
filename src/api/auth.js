@@ -41,6 +41,14 @@ export const getCurrentUser = async () => {
 };
 
 /**
+ * 프로필 업데이트
+ */
+export const updateProfile = async (userData) => {
+  const response = await axios.patch('/api/users/me/', userData);
+  return response;
+};
+
+/**
  * 로그인 상태 확인
  */
 export const isAuthenticated = () => {
