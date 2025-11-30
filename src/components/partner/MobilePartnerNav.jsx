@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Tent, ClipboardList, BarChart3, Building2 } from 'lucide-react';
+import { LayoutDashboard, Tent, ClipboardList, MessageCircle, Building2 } from 'lucide-react';
 
 function MobilePartnerNav() {
   const location = useLocation();
@@ -8,7 +8,7 @@ function MobilePartnerNav() {
     { path: '/partner/dashboard', icon: LayoutDashboard, label: '대시보드' },
     { path: '/partner/festivals', icon: Tent, label: '축제' },
     { path: '/partner/applications', icon: ClipboardList, label: '지원' },
-    { path: '/partner/analytics', icon: BarChart3, label: '분석' },
+    { path: '/partner/messages', icon: MessageCircle, label: '메시지' },
     { path: '/partner/profile', icon: Building2, label: '프로필' },
   ];
 
