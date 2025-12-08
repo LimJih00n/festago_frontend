@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
 import ProfileEditPage from './pages/ProfileEditPage';
 import LoginPage from './pages/LoginPage';
+import LoginCallbackPage from './pages/LoginCallbackPage';
 import PartnerLoginPage from './pages/PartnerLoginPage';
 import EmailLoginPage from './pages/EmailLoginPage';
 import SignupPage from './pages/SignupPage';
@@ -53,6 +54,7 @@ function App() {
 
           {/* 로그인/회원가입 */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/login/callback" element={<LoginCallbackPage />} />
           <Route path="/login/partner" element={<PartnerLoginPage />} />
           <Route path="/login/email" element={<EmailLoginPage />} />
           <Route path="/signup" element={<SignupPage />} />

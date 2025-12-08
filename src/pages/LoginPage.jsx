@@ -1,12 +1,24 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import { ChevronRight, X } from 'lucide-react';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // 에러 메시지 처리
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      alert(error);
+    }
+  }, [searchParams]);
 
   const handleSocialLogin = (provider) => {
-    console.log(`${provider} 로그인`);
-    // TODO: 소셜 로그인 로직 구현
+    // 백엔드 소셜 로그인 URL로 리다이렉트
+    window.location.href = `${API_BASE_URL}/api/auth/${provider}/`;
   };
 
   const handleGuestBrowse = () => {
